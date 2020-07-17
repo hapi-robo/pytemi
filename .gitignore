@@ -1,0 +1,4 @@
+temipy/__pycache__/
+temipy.egg-info/
+venv/
+test.py
