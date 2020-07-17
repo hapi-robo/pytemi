@@ -1,5 +1,5 @@
 # temi Connect Python Package
-Classes and functions to control temi using Python scripts.
+Control temi using Python scripts over MQTT.
 
 
 ## Prerequisites
@@ -33,10 +33,9 @@ source venv/bin/activate
 ## Usage
 Make sure temi is connected to an MQTT broker via the Connect app.
 
-Sample Python script:
+Example:
 ```
 import temipy as temi
-
 
 temi_serial = "01234567890"
 
@@ -52,3 +51,5 @@ robot.tts("Going to the Entrance")
 # command the robot to go to a saved location
 robot.goto("entrance")
 ```
+
+See `sample.py` for more details.
