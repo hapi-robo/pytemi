@@ -5,7 +5,7 @@ Control temi using Python scripts over MQTT.
 ## Prerequisites
 * [Python 3](https://www.python.org/downloads/)
 * Python [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html)
-* Connect APK installed on temi, see [here](https://github.com/hapi-robo/connect)
+* Connect APK installed on temi, see [here](https://github.com/hapi-robo/connect/tree/devel/android)
 * MQTT broker. Free brokers for testing:
 	* [Eclipse](http://test.mosquitto.org/)
 	* [Mosquitto](http://mqtt.eclipse.org)
