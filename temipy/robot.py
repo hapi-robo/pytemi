@@ -25,10 +25,10 @@ class Robot:
 
         """
         print("[CMD] Rotate: {} [deg]".format(angle))
-        
+
         topic = "temi/" + self.serial + "/command/move/turn_by"
         payload = json.dumps({"angle": angle})
-        
+
         self.client.publish(topic, payload, qos=0)
 
     def translate(self, value):
@@ -42,8 +42,8 @@ class Robot:
         elif math.copysign(1, value):
             topic = "temi/" + self.serial + "/command/move/backward"
         else:
-            pass # do nothing
-        
+            pass  # do nothing
+
         self.client.publish(topic, "{}", qos=0)
 
     def tilt(self, angle):
@@ -100,27 +100,16 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    def audio(self, url):
-        """Play audio
+    # def audio(self, url):
+    #     """Play audio
 
-        """
-        print("[CMD] Play Audio: {}".format(url))
+    #     """
+    #     print("[CMD] Play Audio: {}".format(url))
 
-        topic = "temi/" + self.serial + "/command/media/audio"
-        payload = json.dumps({"url": url})
+    #     topic = "temi/" + self.serial + "/command/media/audio"
+    #     payload = json.dumps({"url": url})
 
-        self.client.publish(topic, payload, qos=1)
-
-    def image(self, url):
-        """Display image
-
-        """
-        print("[CMD] Show Image: {}".format(url))
-
-        topic = "temi/" + self.serial + "/command/media/image"
-        payload = json.dumps({"url": url})
-
-        self.client.publish(topic, payload, qos=1)
+    #     self.client.publish(topic, payload, qos=1)
 
     def video(self, url):
         """Play video
@@ -143,3 +132,35 @@ class Robot:
         payload = json.dumps({"video_id": video_id})
 
         self.client.publish(topic, payload, qos=1)
+
+    def webview(self, url):
+        """Show webview
+
+        """
+        print("[CMD] Show Webview: {}".format(url))
+
+        topic = "temi/" + self.serial + "/command/media/webview"
+        payload = json.dumps({"url": url})
+
+        self.client.publish(topic, payload, qos=1)
+
+    def call(self, room_name):
+        """Start a call
+
+        """
+        print("[CMD] Call: {}".format(room_name))
+
+        topic = "temi/" + self.serial + "/command/call/start"
+        payload = json.dumps({"room_name": room_name})
+
+        self.client.publish(topic, payload, qos=1)
+
+    def hangup(self):
+        """End a call
+
+        """
+        print("[CMD] Hangup")
+
+        topic = "temi/" + self.serial + "/command/call/end"
+
+        self.client.publish(topic, "{}", qos=1)
