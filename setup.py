@@ -16,9 +16,7 @@ setuptools.setup(
     author_email="r.oung@hapi-robo.com",
     url="https://github.com/",
     packages=setuptools.find_packages(),
-    install_requires=[
-        "paho-mqtt",
-    ],
+    install_requires=["paho-mqtt",],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
