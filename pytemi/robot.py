@@ -156,6 +156,17 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
+    def app(self, package_name):
+        """Start Android app
+
+        """
+        print("[CMD] Start App: {}".format(package_name))
+
+        topic = "temi/" + self.id + "/command/app"
+        payload = json.dumps({"package_name": package_name})
+
+        self.client.publish(topic, payload, qos=1)
+
     def call(self, room_name):
         """Start a call
 

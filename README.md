@@ -1,5 +1,5 @@
-# temi Connect Python Package
-Control temi using Python scripts over MQTT.
+# pytemi
+A Python client that can be used with [Connect](https://github.com/hapi-robo/connect/) MQTT bridge for temi.
 
 
 ## Prerequisites
@@ -20,7 +20,7 @@ git clone ...
 
 Create a Python virtual environment (`venv`) and install all dependencies:
 ```
-cd temipy/
+cd pytemi/
 ./setup.sh
 ```
 
@@ -41,7 +41,7 @@ python sample.py
 
 ## Sample Script
 ```
-import temipy as temi
+import pytemi as temi
 
 TEMI_SERIAL = "01234567890"
 
