@@ -1,37 +1,30 @@
-# temi Connect Python Package
+# pytemi
 Control temi using Python scripts over MQTT.
 
 
 ## Prerequisites
 * [Python 3](https://www.python.org/downloads/)
-* Python [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html)
-* Connect APK installed on temi, see [here](https://github.com/hapi-robo/connect/tree/devel/android)
+* [Connect app](https://github.com/hapi-robo/connect/releases) installed on temi
 * MQTT broker. Free brokers for testing:
 	* [Eclipse](http://test.mosquitto.org/)
 	* [Mosquitto](http://mqtt.eclipse.org)
 	* [HiveMQ](http://broker.hivemq.com)
 
 
-## Ubuntu / MacOS Setup
-Clone this repository:
+## Setup
+Clone this repository and install all dependencies with pip:
 ```
-git clone ...
+pip install -r requirements.txt
 ```
 
-Create a Python virtual environment (`venv`) and install all dependencies:
+For Linux users, there's a script that will create a Python virtual environment (assuming it's installed) and install all dependencies:
 ```
-cd temipy/
 ./setup.sh
-```
-
-Activate the virtual environment:
-```
-source venv/bin/activate
 ```
 
 
 ## Usage
-Make sure temi is connected to an MQTT broker via the Connect app.
+Make sure the robot is connected to an MQTT broker via the [Connect app](https://github.com/hapi-robo/connect/releases).
 
 Edit the `sample.py` script and adjust the `parameters` appropriately, then run:
 ```
@@ -41,12 +34,14 @@ python sample.py
 
 ## Sample Script
 ```
-import temipy as temi
+import pytemi as temi
 
+MQTT_HOST = "test.mosquitto.org"
+MQTT_PORT = 1883
 TEMI_SERIAL = "01234567890"
 
-# connect to the MQTT server
-mqtt_client = temi.connect("test.mosquitto.org", 1883)
+# connect to the MQTT broker
+mqtt_client = temi.connect(MQTT_HOST, MQTT_PORT)
 
 # create robot object
 robot = temi.Robot(mqtt_client, TEMI_SERIAL)

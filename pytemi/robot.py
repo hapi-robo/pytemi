@@ -18,73 +18,85 @@ class Robot:
 
         """
         self.client = mqtt_client
-        self.serial = temi_serial
+        self.id = temi_serial
 
     def rotate(self, angle):
-        """Rotate robot
+        """Rotate
 
         """
         print("[CMD] Rotate: {} [deg]".format(angle))
 
-        topic = "temi/" + self.serial + "/command/move/turn_by"
-        payload = json.dumps({"angle": angle})
+        if (angle != 0):
+            topic = "temi/" + self.id + "/command/move/turn_by"
+            payload = json.dumps({"angle": angle})
 
-        self.client.publish(topic, payload, qos=0)
+            self.client.publish(topic, payload, qos=0)
 
     def translate(self, value):
-        """Translate robot
+        """Translate
 
         """
         print("[CMD] Translate: {} [unitless]".format(value))
 
-        if math.copysign(1, value):
-            topic = "temi/" + self.serial + "/command/move/forward"
-        elif math.copysign(1, value):
-            topic = "temi/" + self.serial + "/command/move/backward"
+        if math.copysign(1, value) > 0:
+            topic = "temi/" + self.id + "/command/move/forward"
+            self.client.publish(topic, "{}", qos=0)
+        elif math.copysign(1, value) < 0:
+            topic = "temi/" + self.id + "/command/move/backward"
+            self.client.publish(topic, "{}", qos=0)
         else:
             pass  # do nothing
 
-        self.client.publish(topic, "{}", qos=0)
 
     def tilt(self, angle):
-        """Tilt robot's head (absolute angle)
+        """Tilt head (absolute angle)
 
         """
         print("[CMD] Tilt: {} [deg]".format(angle))
 
-        topic = "temi/" + self.serial + "/command/move/tilt"
+        topic = "temi/" + self.id + "/command/move/tilt"
         payload = json.dumps({"angle": angle})
 
         self.client.publish(topic, payload, qos=0)
 
     def tilt_by(self, angle):
-        """Tilt robot's head (relative angle)
+        """Tilt head (relative angle)
 
         """
         print("[CMD] Tilt By: {} [deg]".format(angle))
 
-        topic = "temi/" + self.serial + "/command/move/tilt_by"
+        topic = "temi/" + self.id + "/command/move/tilt_by"
         payload = json.dumps({"angle": angle})
 
         self.client.publish(topic, payload, qos=0)
 
     def stop(self):
-        """Follow
+        """Stop
 
         """
         print("[CMD] Stop")
 
-        topic = "temi/" + self.serial + "/command/move/stop"
+        topic = "temi/" + self.id + "/command/move/stop"
+
+        self.client.publish(topic, "{}", qos=1)
+
+    def follow(self):
+        """Follow
+
+        """
+        print("[CMD] Follow")
+
+        topic = "temi/" + self.id + "/command/follow/unconstrained"
 
         self.client.publish(topic, "{}", qos=1)
 
     def goto(self, location_name):
-        """Go to a specified location
+        """Go to a saved location
 
         """
         print("[CMD] Go-To: {}".format(location_name))
 
-        topic = "temi/" + self.serial + "/command/waypoint/goto"
+        topic = "temi/" + self.id + "/command/waypoint/goto"
         payload = json.dumps({"location": location_name})
 
         self.client.publish(topic, payload, qos=1)
@@ -95,7 +107,7 @@ class Robot:
         """
         print("[CMD] TTS: {}".format(text))
 
-        topic = "temi/" + self.serial + "/command/tts"
+        topic = "temi/" + self.id + "/command/tts"
         payload = json.dumps({"utterance": text})
 
         self.client.publish(topic, payload, qos=1)
@@ -106,7 +118,7 @@ class Robot:
     #     """
     #     print("[CMD] Play Audio: {}".format(url))
 
-    #     topic = "temi/" + self.serial + "/command/media/audio"
+    #     topic = "temi/" + self.id + "/command/media/audio"
     #     payload = json.dumps({"url": url})
 
     #     self.client.publish(topic, payload, qos=1)
@@ -117,7 +129,7 @@ class Robot:
         """
         print("[CMD] Play Video: {}".format(url))
 
-        topic = "temi/" + self.serial + "/command/media/video"
+        topic = "temi/" + self.id + "/command/media/video"
         payload = json.dumps({"url": url})
 
         self.client.publish(topic, payload, qos=1)
@@ -128,7 +140,7 @@ class Robot:
         """
         print("[CMD] Play YouTube: {}".format(video_id))
 
-        topic = "temi/" + self.serial + "/command/media/youtube"
+        topic = "temi/" + self.id + "/command/media/youtube"
         payload = json.dumps({"video_id": video_id})
 
         self.client.publish(topic, payload, qos=1)
@@ -139,8 +151,19 @@ class Robot:
         """
         print("[CMD] Show Webview: {}".format(url))
 
-        topic = "temi/" + self.serial + "/command/media/webview"
+        topic = "temi/" + self.id + "/command/media/webview"
         payload = json.dumps({"url": url})
+
+        self.client.publish(topic, payload, qos=1)
+
+    def app(self, package_name):
+        """Start Android app
+
+        """
+        print("[CMD] Start App: {}".format(package_name))
+
+        topic = "temi/" + self.id + "/command/app"
+        payload = json.dumps({"package_name": package_name})
 
         self.client.publish(topic, payload, qos=1)
 
@@ -150,7 +173,7 @@ class Robot:
         """
         print("[CMD] Call: {}".format(room_name))
 
-        topic = "temi/" + self.serial + "/command/call/start"
+        topic = "temi/" + self.id + "/command/call/start"
         payload = json.dumps({"room_name": room_name})
 
         self.client.publish(topic, payload, qos=1)
@@ -161,6 +184,6 @@ class Robot:
         """
         print("[CMD] Hangup")
 
-        topic = "temi/" + self.serial + "/command/call/end"
+        topic = "temi/" + self.id + "/command/call/end"
 
         self.client.publish(topic, "{}", qos=1)
