@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Sample script
+"""
+Temi randomly and continuously goes to any saved location
 
 """
 import pytemi as temi
@@ -26,10 +27,10 @@ robot = temi.Robot(mqtt_client, TEMI_SERIAL)
 
 # Go to random location
 
-locations = ["Kitchen", "Home Base", "Entrance", "Living room", "Kitchen"]
+LOCATIONS = ["Kitchen", "Home Base", "Entrance", "Living room", "Kitchen"]
 
 while True:
-	robot.goto(random.choice(locations)) # command the robot to go to a random saved location
+	robot.goto(random.choice(LOCATIONS)) # command the robot to go to a random saved location
 	time.sleep(10) # wait some time for action to complete
 
 
