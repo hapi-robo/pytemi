@@ -10,14 +10,12 @@ import random
 
 
 # parameters
-MQTT_HOST = "34.83.131.39"
+MQTT_HOST = "test.mosquitto.org"
 MQTT_PORT = 1883
-MQTT_USERNAME = "connect"
-MQTT_PASSWORD = "hrstqa123"
-TEMI_SERIAL = "00119260058"
+TEMI_SERIAL = "01234567890"
 
-# connect to the MQTT server
-mqtt_client = temi.connect(MQTT_HOST, MQTT_PORT, MQTT_USERNAME, MQTT_PASSWORD)
+# connect to the MQTT broker
+mqtt_client = temi.connect(MQTT_HOST, MQTT_PORT)
 
 # create robot object
 robot = temi.Robot(mqtt_client, TEMI_SERIAL)
