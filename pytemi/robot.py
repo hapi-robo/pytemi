@@ -7,6 +7,35 @@
 import math
 import json
 
+from datetime import datetime
+
+def now():
+    """Return time in string format
+
+    """
+    return datetime.now().strftime("%H:%M:%S")
+
+
+def _on_status(client, userdata, msg):
+    d = json.loads(msg.payload)
+    userdata['locations'] = d['waypoint_list']
+    userdata['battery']['percentage'] = d['battery_percentage']
+
+def _on_battery(client, userdata, msg):
+    print("[{}] [SUB] [BATTERY] {}".format(now(), str(msg.payload)))
+    d = json.loads(msg.payload)
+    userdata['battery']['percentage'] = d['percentage']
+    userdata['battery']['is_charging'] = d['is_charging']
+
+def _on_goto(client, userdata, msg):
+    d = json.loads(msg.payload)
+    userdata['goto']['location'] = d['location']
+    userdata['goto']['status'] = d['status']
+
+def _on_user(client, userdata, msg):
+    print("[{}] [SUB] [USER] {}".format(now(), str(msg.payload)))
+    userdata['user'] = json.loads(msg.payload)
+
 
 class Robot:
     """Robot Class
@@ -19,6 +48,22 @@ class Robot:
         """
         self.client = mqtt_client
         self.id = temi_serial
+
+        # set user data
+        self.state = { 
+            'locations': [],
+            'battery': {},
+            'goto': {},
+            'user': {}
+        }
+        self.client.user_data_set(self.state)
+        
+        # attach subscription callbacks
+        self.client.message_callback_add("temi/{}/status/info".format(temi_serial), _on_status)
+        # self.client.message_callback_add("temi/{}/status/utils/battery".format(temi_serial), _on_battery)
+        self.client.message_callback_add("temi/{}/event/waypoint/goto".format(temi_serial), _on_goto)
+        # self.client.message_callback_add("temi/{}/event/user/detection".format(temi_serial), _on_user)
+
 
     def rotate(self, angle):
         """Rotate
@@ -167,23 +212,68 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    def call(self, room_name):
-        """Start a call
+    # def call(self, room_name):
+    #     """Start a call
+
+    #     """
+    #     print("[CMD] Call: {}".format(room_name))
+
+    #     topic = "temi/" + self.id + "/command/call/start"
+    #     payload = json.dumps({"room_name": room_name})
+
+    #     self.client.publish(topic, payload, qos=1)
+
+    # def hangup(self):
+    #     """End a call
+
+    #     """
+    #     print("[CMD] Hangup")
+
+    #     topic = "temi/" + self.id + "/command/call/end"
+
+    #     self.client.publish(topic, "{}", qos=1)
+
+    @property
+    def locations(self):
+        """Return a list of locations
 
         """
-        print("[CMD] Call: {}".format(room_name))
+        if 'locations' in self.state:
+            return self.state['locations']
+        else:
+            return []
 
-        topic = "temi/" + self.id + "/command/call/start"
-        payload = json.dumps({"room_name": room_name})
+    @property
+    def goto_status(self):
+        if 'status' in self.state['goto']:
+            return self.state['goto']['status']
+        else:
+            return None
 
-        self.client.publish(topic, payload, qos=1)
+    @property
+    def battery(self):
+        return self.state['battery']['percentage']
+    
+    @property
+    def GOTO_START(self):
+        return "start"
 
-    def hangup(self):
-        """End a call
+    @property
+    def GOTO_ABORT(self):
+        return "abort"
+    
+    @property
+    def GOTO_GOING(self):
+        return "going"
 
-        """
-        print("[CMD] Hangup")
+    @property
+    def GOTO_COMPLETE(self):
+        return "complete"
 
-        topic = "temi/" + self.id + "/command/call/end"
+    @property
+    def GOTO_CALCULATING(self):
+        return "calculating"
 
-        self.client.publish(topic, "{}", qos=1)
+    @property
+    def GOTO_OBSTACLE(self):
+        return "obstacle detected"

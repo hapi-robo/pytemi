@@ -4,7 +4,8 @@
 
 """
 import pytemi as temi
-import time
+
+from time import sleep
 
 
 # parameters

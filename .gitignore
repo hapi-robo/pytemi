@@ -1,4 +1,7 @@
 pytemi/__pycache__/
 pytemi.egg-info/
 venv/
+_test/
 test.py
+*.pyc
+*.csv

@@ -21,6 +21,10 @@ def _on_connect(client, userdata, flags, rc):
         )
     )
 
+    # subscribing in on_connect() means that if we lose the connection and
+    # reconnect, then subscriptions will be renewed
+    client.subscribe("temi/#")
+
 
 def _on_disconnect(client, userdata, rc):
     """Disconnect from MQTT broker
@@ -34,13 +38,23 @@ def _on_disconnect(client, userdata, rc):
     client.loop_stop()
 
 
+def _on_message(client, userdata, msg):
+    """Print out any topics that have no callbacks
+
+    """
+    print("[{}][SUB] {} {}".format(now(), msg.topic, str(msg.payload)))
+
+
 def connect(host, port, username=None, password=None):
+    """Connect to MQTT broker
+
+    """
     client_id = socket.gethostname() + "-" + datetime.now().strftime("%Y%m%d%H%M%S")
 
     # create a new MQTT client instance
     client = mqtt.Client(client_id=client_id)
 
-    # attach callbacks
+    # attach general callbacks
     client.on_connect = _on_connect
     client.on_disconnect = _on_disconnect
 
