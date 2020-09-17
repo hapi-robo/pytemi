@@ -77,20 +77,33 @@ class Robot:
 
             self.client.publish(topic, payload, qos=0)
 
+
     def translate(self, value):
         """Translate
 
         """
         print("[CMD] Translate: {} [unitless]".format(value))
 
-        if math.copysign(1, value) > 0:
-            topic = "temi/" + self.id + "/command/move/forward"
-            self.client.publish(topic, "{}", qos=0)
-        elif math.copysign(1, value) < 0:
-            topic = "temi/" + self.id + "/command/move/backward"
-            self.client.publish(topic, "{}", qos=0)
-        else:
-            pass  # do nothing
+        topic = "temi/" + self.id + "/command/move/joystick"
+        payload = json.dumps({"x": value, "y": 0})
+
+        self.client.publish(topic, payload, qos=0)
+
+
+    # def translate(self, value):
+    #     """Translate
+
+    #     """
+    #     print("[CMD] Translate: {} [unitless]".format(value))
+
+    #     if math.copysign(1, value) > 0:
+    #         topic = "temi/" + self.id + "/command/move/forward"
+    #         self.client.publish(topic, "{}", qos=0)
+    #     elif math.copysign(1, value) < 0:
+    #         topic = "temi/" + self.id + "/command/move/backward"
+    #         self.client.publish(topic, "{}", qos=0)
+    #     else:
+    #         pass  # do nothing
 
 
     def tilt(self, angle):
