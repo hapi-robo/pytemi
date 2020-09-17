@@ -6,22 +6,25 @@
 import pytemi as temi
 import random
 import csv
+import os
 
 from time import sleep
 from datetime import datetime
+from dotenv import load_dotenv
+load_dotenv()
 
 
 # robot parameters
-TEMI_SERIAL = "01234567890"
+TEMI_SERIAL = "00119260058" # tony
 
 BATTERY_THRESHOLD_LOW = 20 # [%]
 BATTERY_THRESHOLD_CHARGED = 90 # [%]
 
-# parameters
-MQTT_HOST = "test.mosquitto.org"
-MQTT_PORT = 1883
-MQTT_USERNAME = ""
-MQTT_PASSWORD = ""
+# MQTT server parameters
+MQTT_HOST = os.getenv("MQTT_HOST")
+MQTT_PORT = int(os.getenv("MQTT_PORT"))
+MQTT_USERNAME = os.getenv("MQTT_USERNAME")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
 
 
 class bcolors:

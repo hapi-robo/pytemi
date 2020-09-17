@@ -10,16 +10,17 @@ import concurrent.futures
 import copy
 import inputs
 
+from dotenv import load_dotenv
+load_dotenv()
 
 # robot parameters
-# TEMI_SERIAL = "01234567890"
 TEMI_SERIAL = "00119260058" # tony
 
-# parameters
-MQTT_HOST = "34.83.131.39"
-MQTT_PORT = 1883
-MQTT_USERNAME = "connect"
-MQTT_PASSWORD = "hrstqa123"
+# MQTT server parameters
+MQTT_HOST = os.getenv("MQTT_HOST")
+MQTT_PORT = int(os.getenv("MQTT_PORT"))
+MQTT_USERNAME = os.getenv("MQTT_USERNAME")
+MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
 
 # control
 PUBLISH_INTERVAL = 0.1 # [sec]
@@ -36,8 +37,8 @@ class Pipeline:
     """Single element pipeline between producer and consumer
     
     """
-    def __init__(self, message):
-        self._message = message
+    def __init__(self):
+        self._message = {}
         self._lock = threading.Lock()
 
     def get_message(self):
@@ -64,19 +65,6 @@ def publisher(pipeline):
     while True:
         cmd = pipeline.get_message()
 
-        # tilt
-        if 'abs_ry' in cmd:
-            # scale tilt-angle
-            if cmd['abs_ry'] > 0:
-                tilt_angle = +int(TILT_ANGLE_MAX_POS * cmd['abs_ry'])
-            elif cmd['abs_ry'] < 0:
-                tilt_angle = -int(TILT_ANGLE_MAX_NEG * cmd['abs_ry'])
-            else:
-                tilt_angle = 0
-
-            if abs(tilt_angle) > 0:
-                robot.tilt_by(tilt_angle)
-
         # translate
         if 'abs_y' in cmd:
             # reverse axis
@@ -100,14 +88,26 @@ def publisher(pipeline):
                 else:
                     pass
 
+        # tilt
+        if 'abs_ry' in cmd:
+            # scale tilt-angle
+            if cmd['abs_ry'] > 0:
+                tilt_angle = +int(TILT_ANGLE_MAX_POS * cmd['abs_ry'])
+            elif cmd['abs_ry'] < 0:
+                tilt_angle = -int(TILT_ANGLE_MAX_NEG * cmd['abs_ry'])
+            else:
+                tilt_angle = 0
+
+            if abs(tilt_angle) > 0:
+                robot.tilt_by(tilt_angle)
+
 
         # print to console
         print("--------------------")
         print("Timestamp: {:.2f}".format(time.time()))
-        print("Phrase: {}".format(phrase))
-        print("Tilt Angle: {:+}".format(tilt_angle))
-        print("Linear Velocity: {:+.2f}".format(linear_velocity))
-        print("Angular Velocity: {:+.2f}".format(angular_velocity))
+        print("Translate: {:+.2f}".format(linear_velocity))
+        print("Rotate: {:+.2f}".format(angular_velocity))
+        print("Tilt: {:+}".format(tilt_angle))
 
         # wait
         time.sleep(PUBLISH_INTERVAL)
@@ -117,7 +117,7 @@ def subscriber(pipeline):
     """Joystick subscriber thread
 
     """
-    cmd = dict()
+    cmd = {}
 
     while True:
         # clear command
@@ -160,7 +160,7 @@ if __name__ == "__main__":
         raise Exception("Could not find any gamepads")
 
     # construct pipeline
-    pipeline = Pipeline(dict())
+    pipeline = Pipeline()
 
     # start threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:

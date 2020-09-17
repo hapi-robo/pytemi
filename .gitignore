@@ -5,3 +5,4 @@ _test/
 test.py
 *.pyc
 *.csv
+*.env
