@@ -42,12 +42,13 @@ class Robot:
 
     """
 
-    def __init__(self, mqtt_client, temi_serial):
+    def __init__(self, mqtt_client, temi_serial, silent=True):
         """Constructor
 
         """
         self.client = mqtt_client
         self.id = temi_serial
+        self.silent = silent
 
         # set user data
         self.state = { 
@@ -69,7 +70,8 @@ class Robot:
         """Rotate
 
         """
-        print("[CMD] Rotate: {} [deg]".format(angle))
+        if not self.silent:
+            print("[CMD] Rotate: {} [deg]".format(angle))
 
         if (angle != 0):
             topic = "temi/" + self.id + "/command/move/turn_by"
@@ -82,7 +84,8 @@ class Robot:
         """Translate
 
         """
-        print("[CMD] Translate: {} [unitless]".format(value))
+        if not self.silent:
+            print("[CMD] Translate: {} [unitless]".format(value))
 
         topic = "temi/" + self.id + "/command/move/joystick"
         payload = json.dumps({"x": value, "y": 0})
@@ -94,7 +97,8 @@ class Robot:
     #     """Translate
 
     #     """
-    #     print("[CMD] Translate: {} [unitless]".format(value))
+    #     if not self.silent:
+    #         print("[CMD] Translate: {} [unitless]".format(value))
 
     #     if math.copysign(1, value) > 0:
     #         topic = "temi/" + self.id + "/command/move/forward"
@@ -110,7 +114,8 @@ class Robot:
         """Tilt head (absolute angle)
 
         """
-        print("[CMD] Tilt: {} [deg]".format(angle))
+        if not self.silent:
+            print("[CMD] Tilt: {} [deg]".format(angle))
 
         topic = "temi/" + self.id + "/command/move/tilt"
         payload = json.dumps({"angle": angle})
@@ -121,7 +126,8 @@ class Robot:
         """Tilt head (relative angle)
 
         """
-        print("[CMD] Tilt By: {} [deg]".format(angle))
+        if not self.silent:
+            print("[CMD] Tilt By: {} [deg]".format(angle))
 
         topic = "temi/" + self.id + "/command/move/tilt_by"
         payload = json.dumps({"angle": angle})
@@ -132,7 +138,8 @@ class Robot:
         """Stop
 
         """
-        print("[CMD] Stop")
+        if not self.silent:
+            print("[CMD] Stop")
 
         topic = "temi/" + self.id + "/command/move/stop"
 
@@ -142,7 +149,8 @@ class Robot:
         """Follow
 
         """
-        print("[CMD] Follow")
+        if not self.silent:
+            print("[CMD] Follow")
 
         topic = "temi/" + self.id + "/command/follow/unconstrained"
 
@@ -152,7 +160,8 @@ class Robot:
         """Go to a saved location
 
         """
-        print("[CMD] Go-To: {}".format(location_name))
+        if not self.silent:
+            print("[CMD] Go-To: {}".format(location_name))
 
         topic = "temi/" + self.id + "/command/waypoint/goto"
         payload = json.dumps({"location": location_name})
@@ -163,7 +172,8 @@ class Robot:
         """Text-to-speech
 
         """
-        print("[CMD] TTS: {}".format(text))
+        if not self.silent:
+            print("[CMD] TTS: {}".format(text))
 
         topic = "temi/" + self.id + "/command/tts"
         payload = json.dumps({"utterance": text})
@@ -185,7 +195,8 @@ class Robot:
         """Play video
 
         """
-        print("[CMD] Play Video: {}".format(url))
+        if not self.silent:
+            print("[CMD] Play Video: {}".format(url))
 
         topic = "temi/" + self.id + "/command/media/video"
         payload = json.dumps({"url": url})
@@ -196,7 +207,8 @@ class Robot:
         """Play YouTube
 
         """
-        print("[CMD] Play YouTube: {}".format(video_id))
+        if not self.silent:
+            print("[CMD] Play YouTube: {}".format(video_id))
 
         topic = "temi/" + self.id + "/command/media/youtube"
         payload = json.dumps({"video_id": video_id})
@@ -207,7 +219,8 @@ class Robot:
         """Show webview
 
         """
-        print("[CMD] Show Webview: {}".format(url))
+        if not self.silent:
+            print("[CMD] Show Webview: {}".format(url))
 
         topic = "temi/" + self.id + "/command/media/webview"
         payload = json.dumps({"url": url})
@@ -218,7 +231,8 @@ class Robot:
         """Start Android app
 
         """
-        print("[CMD] Start App: {}".format(package_name))
+        if not self.silent:
+            print("[CMD] Start App: {}".format(package_name))
 
         topic = "temi/" + self.id + "/command/app"
         payload = json.dumps({"package_name": package_name})

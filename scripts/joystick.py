@@ -9,9 +9,11 @@ import threading
 import concurrent.futures
 import copy
 import inputs
+import os
 
 from dotenv import load_dotenv
 load_dotenv()
+
 
 # robot parameters
 TEMI_SERIAL = "00119260058" # tony
