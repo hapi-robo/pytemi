@@ -16,7 +16,8 @@ load_dotenv()
 
 
 # robot parameters
-TEMI_SERIAL = "00119260058" # tony
+# TEMI_SERIAL = "00119260058" # tony
+TEMI_SERIAL = "00119140088" # gary
 
 # MQTT server parameters
 MQTT_HOST = os.getenv("MQTT_HOST")
