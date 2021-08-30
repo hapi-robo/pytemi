@@ -9,79 +9,76 @@ import json
 
 from datetime import datetime
 
-def now():
-    """Return time in string format
 
-    """
+def now():
+    """Return time in string format"""
     return datetime.now().strftime("%H:%M:%S")
 
 
 def _on_status(client, userdata, msg):
     d = json.loads(msg.payload)
-    userdata['locations'] = d['waypoint_list']
-    userdata['battery']['percentage'] = d['battery_percentage']
+    userdata["locations"] = d["waypoint_list"]
+    userdata["battery"]["percentage"] = d["battery_percentage"]
+
 
 def _on_battery(client, userdata, msg):
     print("[{}] [SUB] [BATTERY] {}".format(now(), str(msg.payload)))
     d = json.loads(msg.payload)
-    userdata['battery']['percentage'] = d['percentage']
-    userdata['battery']['is_charging'] = d['is_charging']
+    userdata["battery"]["percentage"] = d["percentage"]
+    userdata["battery"]["is_charging"] = d["is_charging"]
+
 
 def _on_goto(client, userdata, msg):
     d = json.loads(msg.payload)
-    userdata['goto']['location'] = d['location']
-    userdata['goto']['status'] = d['status']
+    userdata["goto"]["location"] = d["location"]
+    userdata["goto"]["status"] = d["status"]
+
 
 def _on_user(client, userdata, msg):
     print("[{}] [SUB] [USER] {}".format(now(), str(msg.payload)))
-    userdata['user'] = json.loads(msg.payload)
+    userdata["user"] = json.loads(msg.payload)
 
 
 class Robot:
-    """Robot Class
-
-    """
+    """Robot Class"""
 
     def __init__(self, mqtt_client, temi_serial, silent=True):
-        """Constructor
-
-        """
+        """Constructor"""
         self.client = mqtt_client
         self.id = temi_serial
         self.silent = silent
 
         # set user data
-        self.state = { 
-            'locations': [],
-            'battery': {},
-            'goto': {},
-            'user': {}
-        }
+        self.state = {"locations": [], "battery": {}, "goto": {}, "user": {}}
         self.client.user_data_set(self.state)
-        
+
         # attach subscription callbacks
-        self.client.message_callback_add("temi/{}/status/info".format(temi_serial), _on_status)
-        self.client.message_callback_add("temi/{}/status/utils/battery".format(temi_serial), _on_battery)
-        self.client.message_callback_add("temi/{}/event/waypoint/goto".format(temi_serial), _on_goto)
-        self.client.message_callback_add("temi/{}/event/user/detection".format(temi_serial), _on_user)
+        self.client.message_callback_add(
+            "temi/{}/status/info".format(temi_serial), _on_status
+        )
+        self.client.message_callback_add(
+            "temi/{}/status/utils/battery".format(temi_serial), _on_battery
+        )
+        self.client.message_callback_add(
+            "temi/{}/event/waypoint/goto".format(temi_serial), _on_goto
+        )
+        self.client.message_callback_add(
+            "temi/{}/event/user/detection".format(temi_serial), _on_user
+        )
 
     def rotate(self, angle):
-        """Rotate
-
-        """
+        """Rotate"""
         if not self.silent:
             print("[CMD] Rotate: {} [deg]".format(angle))
 
-        if (angle != 0):
+        if angle != 0:
             topic = "temi/" + self.id + "/command/move/turn_by"
             payload = json.dumps({"angle": angle})
 
             self.client.publish(topic, payload, qos=0)
 
     def translate(self, value):
-        """Translate
-
-        """
+        """Translate"""
         if not self.silent:
             print("[CMD] Translate: {} [unitless]".format(value))
 
@@ -91,9 +88,7 @@ class Robot:
         self.client.publish(topic, payload, qos=0)
 
     def tilt(self, angle):
-        """Tilt head (absolute angle)
-
-        """
+        """Tilt head (absolute angle)"""
         if not self.silent:
             print("[CMD] Tilt: {} [deg]".format(angle))
 
@@ -103,9 +98,7 @@ class Robot:
         self.client.publish(topic, payload, qos=0)
 
     def tilt_by(self, angle):
-        """Tilt head (relative angle)
-
-        """
+        """Tilt head (relative angle)"""
         if not self.silent:
             print("[CMD] Tilt By: {} [deg]".format(angle))
 
@@ -115,9 +108,7 @@ class Robot:
         self.client.publish(topic, payload, qos=0)
 
     def stop(self):
-        """Stop
-
-        """
+        """Stop"""
         if not self.silent:
             print("[CMD] Stop")
 
@@ -126,9 +117,7 @@ class Robot:
         self.client.publish(topic, "{}", qos=1)
 
     def follow(self):
-        """Follow
-
-        """
+        """Follow"""
         if not self.silent:
             print("[CMD] Follow")
 
@@ -137,9 +126,7 @@ class Robot:
         self.client.publish(topic, "{}", qos=1)
 
     def goto(self, location_name):
-        """Go to a saved location
-
-        """
+        """Go to a saved location"""
         if not self.silent:
             print("[CMD] Go-To: {}".format(location_name))
 
@@ -149,9 +136,7 @@ class Robot:
         self.client.publish(topic, payload, qos=1)
 
     def tts(self, text):
-        """Text-to-speech
-
-        """
+        """Text-to-speech"""
         if not self.silent:
             print("[CMD] TTS: {}".format(text))
 
@@ -172,9 +157,7 @@ class Robot:
     #     self.client.publish(topic, payload, qos=1)
 
     def video(self, url):
-        """Play video
-
-        """
+        """Play video"""
         if not self.silent:
             print("[CMD] Play Video: {}".format(url))
 
@@ -196,9 +179,7 @@ class Robot:
     #     self.client.publish(topic, payload, qos=1)
 
     def webview(self, url):
-        """Show webview
-
-        """
+        """Show webview"""
         if not self.silent:
             print("[CMD] Show Webview: {}".format(url))
 
@@ -209,25 +190,23 @@ class Robot:
 
     @property
     def locations(self):
-        """Return a list of locations
-
-        """
-        if 'locations' in self.state:
-            return self.state['locations']
+        """Return a list of locations"""
+        if "locations" in self.state:
+            return self.state["locations"]
         else:
             return []
 
     @property
     def goto_status(self):
-        if 'status' in self.state['goto']:
-            return self.state['goto']['status']
+        if "status" in self.state["goto"]:
+            return self.state["goto"]["status"]
         else:
             return None
 
     @property
     def battery(self):
-        return self.state['battery']['percentage']
-    
+        return self.state["battery"]["percentage"]
+
     @property
     def GOTO_START(self):
         return "start"
@@ -235,7 +214,7 @@ class Robot:
     @property
     def GOTO_ABORT(self):
         return "abort"
-    
+
     @property
     def GOTO_GOING(self):
         return "going"

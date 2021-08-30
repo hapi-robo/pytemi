@@ -12,6 +12,7 @@ import inputs
 import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 
@@ -25,20 +26,19 @@ MQTT_USERNAME = os.getenv("MQTT_USERNAME")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
 
 # control
-PUBLISH_INTERVAL = 0.1 # [sec]
-ANGULAR_VELOCITY = 30 # [deg/s]
+PUBLISH_INTERVAL = 0.1  # [sec]
+ANGULAR_VELOCITY = 30  # [deg/s]
 
 # robot limits
-TILT_ANGLE_MAX_POS = 55 # [deg]
-TILT_ANGLE_MAX_NEG = -20 # [deg]
-ANGULAR_VELOCITY_MIN = 0.3 # [normalized]
-LINEAR_VELOCITY_MIN = 0.5 # [normalized]
+TILT_ANGLE_MAX_POS = 55  # [deg]
+TILT_ANGLE_MAX_NEG = -20  # [deg]
+ANGULAR_VELOCITY_MIN = 0.3  # [normalized]
+LINEAR_VELOCITY_MIN = 0.5  # [normalized]
 
 
 class Pipeline:
-    """Single element pipeline between producer and consumer
-    
-    """
+    """Single element pipeline between producer and consumer"""
+
     def __init__(self):
         self._message = {}
         self._lock = threading.Lock()
@@ -47,7 +47,7 @@ class Pipeline:
         if self._lock.acquire(blocking=False):
             message = copy.deepcopy(self._message)
             self._lock.release()
-        
+
         return message
 
     def set_message(self, message):
@@ -57,9 +57,7 @@ class Pipeline:
 
 
 def publisher(pipeline):
-    """Robot publisher thread
-
-    """
+    """Robot publisher thread"""
     tilt_angle = 0
     linear_velocity = 0.0
     angular_velocity = 0.0
@@ -68,19 +66,19 @@ def publisher(pipeline):
         cmd = pipeline.get_message()
 
         # translate
-        if 'abs_y' in cmd:
+        if "abs_y" in cmd:
             # reverse axis
-            linear_velocity = -cmd['abs_y']
+            linear_velocity = -cmd["abs_y"]
 
             # check for minimum linear velocity
             if abs(linear_velocity) > LINEAR_VELOCITY_MIN:
                 robot.translate(linear_velocity)
 
         # rotate
-        if 'abs_x' in cmd:
+        if "abs_x" in cmd:
             # reverse axis
-            angular_velocity = -cmd['abs_x']
-        
+            angular_velocity = -cmd["abs_x"]
+
             # check for minimum angular velocity
             if abs(angular_velocity) > ANGULAR_VELOCITY_MIN:
                 if angular_velocity > 0:
@@ -91,18 +89,17 @@ def publisher(pipeline):
                     pass
 
         # tilt
-        if 'abs_ry' in cmd:
+        if "abs_ry" in cmd:
             # scale tilt-angle
-            if cmd['abs_ry'] > 0:
-                tilt_angle = +int(TILT_ANGLE_MAX_POS * cmd['abs_ry'])
-            elif cmd['abs_ry'] < 0:
-                tilt_angle = -int(TILT_ANGLE_MAX_NEG * cmd['abs_ry'])
+            if cmd["abs_ry"] > 0:
+                tilt_angle = +int(TILT_ANGLE_MAX_POS * cmd["abs_ry"])
+            elif cmd["abs_ry"] < 0:
+                tilt_angle = -int(TILT_ANGLE_MAX_NEG * cmd["abs_ry"])
             else:
                 tilt_angle = 0
 
             if abs(tilt_angle) > 0:
                 robot.tilt_by(tilt_angle)
-
 
         # print to console
         print("--------------------")
@@ -116,9 +113,7 @@ def publisher(pipeline):
 
 
 def subscriber(pipeline):
-    """Joystick subscriber thread
-
-    """
+    """Joystick subscriber thread"""
     cmd = {}
 
     while True:
@@ -127,23 +122,22 @@ def subscriber(pipeline):
 
         # collect gamepad events (blocking)
         events = inputs.get_gamepad()
-        
+
         # parse all events
         for event in events:
             if event.ev_type is not "Sync":
                 # print("{} {} {}".format(event.ev_type, event.code, event.state))
-                
+
                 val_norm = event.state / 32768.0
 
                 if event.code is "ABS_Y":
-                    cmd['abs_y'] = val_norm
+                    cmd["abs_y"] = val_norm
 
                 if event.code is "ABS_X":
-                    cmd['abs_x'] = val_norm
+                    cmd["abs_x"] = val_norm
 
                 if event.code is "ABS_RY":
-                    cmd['abs_ry'] = val_norm
-
+                    cmd["abs_ry"] = val_norm
 
         if cmd:
             # print(cmd)
@@ -156,7 +150,7 @@ if __name__ == "__main__":
 
     # create robot object
     robot = temi.Robot(mqtt_client, TEMI_SERIAL)
-    
+
     # verify joystick connection
     if len(inputs.devices.gamepads) == 0:
         raise Exception("Could not find any gamepads")
