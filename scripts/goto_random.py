@@ -15,7 +15,7 @@ load_dotenv()
 
 
 # robot parameters
-TEMI_SERIAL = "00119260058" # tony
+TEMI_SERIAL = "00119260058"
 
 BATTERY_THRESHOLD_LOW = 20 # [%]
 BATTERY_THRESHOLD_CHARGED = 90 # [%]

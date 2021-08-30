@@ -1,14 +1,5 @@
 # pytemi
-Control temi using Python scripts over MQTT.
-
-
-## Prerequisites
-* [Python 3](https://www.python.org/downloads/)
-* [Connect app](https://github.com/hapi-robo/connect/releases) installed on temi
-* MQTT broker. Free brokers for testing:
-	* [Eclipse](http://test.mosquitto.org/)
-	* [Mosquitto](http://mqtt.eclipse.org)
-	* [HiveMQ](http://broker.hivemq.com)
+A Python package for controlling temi over MQTT. To be used with [temi-mqtt-client](https://github.com/hapi-robo/temi-mqtt-client/). For prototyping/development only.
 
 
 ## Setup
@@ -24,15 +15,10 @@ For Linux users, there's a script that will create a Python virtual environment 
 
 
 ## Usage
-Make sure the robot is connected to an MQTT broker via the [Connect app](https://github.com/hapi-robo/connect/releases).
-
-Edit the `sample.py` script and adjust the `parameters` appropriately, then run:
-```
-python sample.py
-```
+Make sure the robot is connected to an MQTT broker via the [temi-mqtt-client](https://github.com/hapi-robo/temi-mqtt-client/) app.
 
 
-## Sample Script
+### Sample Script
 ```
 import pytemi as temi
 
@@ -53,4 +39,4 @@ robot.tts("Going to the Entrance")
 robot.goto("entrance")
 ```
 
-See `sample.py` for more details.
+See `./sample.py` for more details. Other examples can be found in the `scripts/` folder.

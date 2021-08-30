@@ -61,10 +61,9 @@ class Robot:
         
         # attach subscription callbacks
         self.client.message_callback_add("temi/{}/status/info".format(temi_serial), _on_status)
-        # self.client.message_callback_add("temi/{}/status/utils/battery".format(temi_serial), _on_battery)
+        self.client.message_callback_add("temi/{}/status/utils/battery".format(temi_serial), _on_battery)
         self.client.message_callback_add("temi/{}/event/waypoint/goto".format(temi_serial), _on_goto)
-        # self.client.message_callback_add("temi/{}/event/user/detection".format(temi_serial), _on_user)
-
+        self.client.message_callback_add("temi/{}/event/user/detection".format(temi_serial), _on_user)
 
     def rotate(self, angle):
         """Rotate
@@ -79,7 +78,6 @@ class Robot:
 
             self.client.publish(topic, payload, qos=0)
 
-
     def translate(self, value):
         """Translate
 
@@ -91,24 +89,6 @@ class Robot:
         payload = json.dumps({"x": value, "y": 0})
 
         self.client.publish(topic, payload, qos=0)
-
-
-    # def translate(self, value):
-    #     """Translate
-
-    #     """
-    #     if not self.silent:
-    #         print("[CMD] Translate: {} [unitless]".format(value))
-
-    #     if math.copysign(1, value) > 0:
-    #         topic = "temi/" + self.id + "/command/move/forward"
-    #         self.client.publish(topic, "{}", qos=0)
-    #     elif math.copysign(1, value) < 0:
-    #         topic = "temi/" + self.id + "/command/move/backward"
-    #         self.client.publish(topic, "{}", qos=0)
-    #     else:
-    #         pass  # do nothing
-
 
     def tilt(self, angle):
         """Tilt head (absolute angle)
@@ -203,17 +183,17 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    def youtube(self, video_id):
-        """Play YouTube
+    # def youtube(self, video_id):
+    #     """Play YouTube
 
-        """
-        if not self.silent:
-            print("[CMD] Play YouTube: {}".format(video_id))
+    #     """
+    #     if not self.silent:
+    #         print("[CMD] Play YouTube: {}".format(video_id))
 
-        topic = "temi/" + self.id + "/command/media/youtube"
-        payload = json.dumps({"video_id": video_id})
+    #     topic = "temi/" + self.id + "/command/media/youtube"
+    #     payload = json.dumps({"video_id": video_id})
 
-        self.client.publish(topic, payload, qos=1)
+    #     self.client.publish(topic, payload, qos=1)
 
     def webview(self, url):
         """Show webview
@@ -226,39 +206,6 @@ class Robot:
         payload = json.dumps({"url": url})
 
         self.client.publish(topic, payload, qos=1)
-
-    def app(self, package_name):
-        """Start Android app
-
-        """
-        if not self.silent:
-            print("[CMD] Start App: {}".format(package_name))
-
-        topic = "temi/" + self.id + "/command/app"
-        payload = json.dumps({"package_name": package_name})
-
-        self.client.publish(topic, payload, qos=1)
-
-    # def call(self, room_name):
-    #     """Start a call
-
-    #     """
-    #     print("[CMD] Call: {}".format(room_name))
-
-    #     topic = "temi/" + self.id + "/command/call/start"
-    #     payload = json.dumps({"room_name": room_name})
-
-    #     self.client.publish(topic, payload, qos=1)
-
-    # def hangup(self):
-    #     """End a call
-
-    #     """
-    #     print("[CMD] Hangup")
-
-    #     topic = "temi/" + self.id + "/command/call/end"
-
-    #     self.client.publish(topic, "{}", qos=1)
 
     @property
     def locations(self):
