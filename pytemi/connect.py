@@ -12,20 +12,20 @@ import time
 
 
 def _on_connect(client, userdata, flags, rc):
-    """Connect to MQTT broker and subscribe to topics
-
-    """
+    """Connect to MQTT broker and subscribe to topics"""
     print(
         "[STATUS] Connected to: {} (rc:{})".format(
             client._client_id.decode("ascii"), str(rc)
         )
     )
 
+    # subscribing in on_connect() means that if we lose the connection and
+    # reconnect, then subscriptions will be renewed
+    client.subscribe("temi/#")
+
 
 def _on_disconnect(client, userdata, rc):
-    """Disconnect from MQTT broker
-
-    """
+    """Disconnect from MQTT broker"""
     print(
         "[STATUS] Disconnected from: {} (rc:{})".format(
             client._client_id.decode("ascii"), str(rc)
@@ -34,13 +34,19 @@ def _on_disconnect(client, userdata, rc):
     client.loop_stop()
 
 
+def _on_message(client, userdata, msg):
+    """Print out any topics that have no callbacks"""
+    print("[{}][SUB] {} {}".format(now(), msg.topic, str(msg.payload)))
+
+
 def connect(host, port, username=None, password=None):
+    """Connect to MQTT broker"""
     client_id = socket.gethostname() + "-" + datetime.now().strftime("%Y%m%d%H%M%S")
 
     # create a new MQTT client instance
     client = mqtt.Client(client_id=client_id)
 
-    # attach callbacks
+    # attach general callbacks
     client.on_connect = _on_connect
     client.on_disconnect = _on_disconnect
 

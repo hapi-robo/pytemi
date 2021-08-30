@@ -5,9 +5,11 @@ def readme():
     with open("README.md", "r") as f:
         return f.read()
 
+
 def requirements():
     with open("requirements.txt", "r") as f:
         return f.read().splitlines()
+
 
 setuptools.setup(
     name="pytemi",
