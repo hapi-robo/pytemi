@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """temi Robot Class
 
-
 """
 import math
 import json
@@ -145,17 +144,6 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    # def audio(self, url):
-    #     """Play audio
-
-    #     """
-    #     print("[CMD] Play Audio: {}".format(url))
-
-    #     topic = "temi/" + self.id + "/command/media/audio"
-    #     payload = json.dumps({"url": url})
-
-    #     self.client.publish(topic, payload, qos=1)
-
     def video(self, url):
         """Play video"""
         if not self.silent:
@@ -165,18 +153,6 @@ class Robot:
         payload = json.dumps({"url": url})
 
         self.client.publish(topic, payload, qos=1)
-
-    # def youtube(self, video_id):
-    #     """Play YouTube
-
-    #     """
-    #     if not self.silent:
-    #         print("[CMD] Play YouTube: {}".format(video_id))
-
-    #     topic = "temi/" + self.id + "/command/media/youtube"
-    #     payload = json.dumps({"video_id": video_id})
-
-    #     self.client.publish(topic, payload, qos=1)
 
     def webview(self, url):
         """Show webview"""
