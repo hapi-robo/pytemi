@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """temi Robot Class
 
-
 """
 import math
 import json
@@ -77,13 +76,13 @@ class Robot:
 
             self.client.publish(topic, payload, qos=0)
 
-    def translate(self, value):
-        """Translate"""
+    def joystick(self, x, y):
+        """Joystick"""
         if not self.silent:
-            print("[CMD] Translate: {} [unitless]".format(value))
+            print("[CMD] Translate: {} {} [unitless]".format(x, y))
 
         topic = "temi/" + self.id + "/command/move/joystick"
-        payload = json.dumps({"x": value, "y": 0})
+        payload = json.dumps({"x": x, "y": y})
 
         self.client.publish(topic, payload, qos=0)
 
@@ -145,17 +144,6 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    # def audio(self, url):
-    #     """Play audio
-
-    #     """
-    #     print("[CMD] Play Audio: {}".format(url))
-
-    #     topic = "temi/" + self.id + "/command/media/audio"
-    #     payload = json.dumps({"url": url})
-
-    #     self.client.publish(topic, payload, qos=1)
-
     def video(self, url):
         """Play video"""
         if not self.silent:
@@ -166,18 +154,6 @@ class Robot:
 
         self.client.publish(topic, payload, qos=1)
 
-    # def youtube(self, video_id):
-    #     """Play YouTube
-
-    #     """
-    #     if not self.silent:
-    #         print("[CMD] Play YouTube: {}".format(video_id))
-
-    #     topic = "temi/" + self.id + "/command/media/youtube"
-    #     payload = json.dumps({"video_id": video_id})
-
-    #     self.client.publish(topic, payload, qos=1)
-
     def webview(self, url):
         """Show webview"""
         if not self.silent:
@@ -185,6 +161,16 @@ class Robot:
 
         topic = "temi/" + self.id + "/command/media/webview"
         payload = json.dumps({"url": url})
+
+        self.client.publish(topic, payload, qos=1)
+
+    def custom(self, topic, data):
+        """Send custom message"""
+        if not self.silent:
+            print("[CMD] Custom")
+
+        topic = "temi/" + self.id + topic
+        payload = json.dumps(data)
 
         self.client.publish(topic, payload, qos=1)
 
