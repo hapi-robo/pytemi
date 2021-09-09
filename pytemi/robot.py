@@ -77,13 +77,13 @@ class Robot:
 
             self.client.publish(topic, payload, qos=0)
 
-    def translate(self, value):
-        """Translate"""
+    def joystick(self, x, y):
+        """Joystick"""
         if not self.silent:
-            print("[CMD] Translate: {} [unitless]".format(value))
+            print("[CMD] Translate: {} {} [unitless]".format(x, y))
 
         topic = "temi/" + self.id + "/command/move/joystick"
-        payload = json.dumps({"x": value, "y": 0})
+        payload = json.dumps({"x": x, "y": y})
 
         self.client.publish(topic, payload, qos=0)
 
@@ -185,6 +185,16 @@ class Robot:
 
         topic = "temi/" + self.id + "/command/media/webview"
         payload = json.dumps({"url": url})
+
+        self.client.publish(topic, payload, qos=1)
+
+    def custom(self, topic, data):
+        """Send custom message"""
+        if not self.silent:
+            print("[CMD] Custom")
+
+        topic = "temi/" + self.id + topic
+        payload = json.dumps(data)
 
         self.client.publish(topic, payload, qos=1)
 
